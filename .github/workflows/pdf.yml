@@ -1,0 +1,37 @@
+name: Build PDF
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  INSTANCE: 'Writerside2/auto'
+  ARTIFACT: 'pdfSourceAUTO.pdf'
+  DOCKER_VERSION: '2.1.2033-p7370'
+  PDF: 'PDF.xml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build Writerside docs PDF
+        uses: Quattro8/writerside-github-action@v4
+        with:
+          instance: ${{ env.INSTANCE }}
+          artifact: ${{ env.ARTIFACT }}
+          docker-version: ${{ env.DOCKER_VERSION }}
+          pdf:  $ {{ env.PDF }}
+
+      - name: Save artifact with build results
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: |
+            artifacts/${{ env.ARTIFACT }}
+          retention-days: 7
